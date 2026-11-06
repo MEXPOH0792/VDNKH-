@@ -58,6 +58,7 @@ const dishOrbit = document.querySelector('#dishOrbit');
 const listView = document.querySelector('#listView');
 const detailCopy = document.querySelector('#detailCopy');
 const ingredients = document.querySelector('#ingredients');
+const carouselDuration = 340;
 const money = value => `${new Intl.NumberFormat('ru-RU').format(value)} ₽`;
 const currentDish = () => dishes[state.index];
 const wrap = index => (index + dishes.length) % dishes.length;
@@ -159,24 +160,24 @@ function switchDish(step, animate = true) {
   const ghostAnimation = ghost.animate([
     { transform: 'translate3d(-50%,0,0) scale(1)', opacity: 1 },
     { transform: `translate3d(calc(-50% + ${distance}px),0,0) scale(.42)`, opacity: .72 }
-  ], { duration: 600, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' });
+  ], { duration: carouselDuration, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' });
 
   state.index = nextIndex;
   renderDish();
   const incomingDish = currentDish();
   renderDishCopy(outgoingDish);
-  window.setTimeout(() => renderDishCopy(incomingDish), 300);
+  window.setTimeout(() => renderDishCopy(incomingDish), carouselDuration / 2);
   mainDish.animate([
     { transform: `translate3d(calc(-50% + ${entry}px),0,0) scale(.42)`, opacity: .72 },
     { transform: 'translate3d(-50%,0,0) scale(1)', opacity: 1 }
-  ], { duration: 600, easing: 'cubic-bezier(.4,0,.2,1)' });
+  ], { duration: carouselDuration, easing: 'cubic-bezier(.4,0,.2,1)' });
 
   document.querySelector('#homeCopy').animate([
     { opacity: 1, transform: 'translateX(0)', offset: 0 },
     { opacity: 0, transform: `translateX(${step > 0 ? -14 : 14}px)`, offset: .42 },
     { opacity: 0, transform: `translateX(${step > 0 ? 14 : -14}px)`, offset: .55 },
     { opacity: 1, transform: 'translateX(0)', offset: 1 }
-  ], { duration: 600, easing: 'cubic-bezier(.4,0,.2,1)' });
+  ], { duration: carouselDuration, easing: 'cubic-bezier(.4,0,.2,1)' });
 
   ghostAnimation.finished.finally(() => {
     ghost.remove();
@@ -323,7 +324,7 @@ dishScene.addEventListener('pointerup', event => {
   const dx = event.clientX - pointerStart.x;
   const dy = event.clientY - pointerStart.y;
   const isSwipe = state.mode === 'home'
-    && Math.abs(dx) > 42
+    && Math.abs(dx) > 30
     && Math.abs(dx) > Math.abs(dy) * 1.15;
 
   try { dishScene.releasePointerCapture(event.pointerId); } catch (_) {}
