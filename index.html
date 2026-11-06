@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#020704">
+  <meta name="description" content="Интерактивный мобильный прототип меню Sheikh Lounge">
+  <title>Sheikh Lounge — меню</title>
+  <link rel="preload" href="assets/brand/intro-poster.webp" as="image" fetchpriority="high">
+  <link rel="preload" href="assets/brand/intro-mobile.webm" as="video" type="video/webm">
+  <link rel="preload" href="assets/plov-full.webp" as="image">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="brand-intro" id="brandIntro" hidden aria-hidden="true" aria-label="Фирменная заставка Sheikh Lounge">
+    <video id="brandIntroVideo" muted playsinline preload="auto" poster="assets/brand/intro-poster.webp" aria-hidden="true">
+      <source src="assets/brand/intro-mobile.webm" type="video/webm">
+      <source src="assets/brand/intro-mobile.mp4" type="video/mp4">
+    </video>
+    <button class="intro-skip" type="button" data-intro-skip>Пропустить</button>
+  </div>
+
+  <main class="app" id="app" data-mode="home" data-direction="next">
+    <div class="scene-glow" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <button class="header-icon" type="button" data-action="info" aria-label="Информация о кафе">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M5 12h10M5 17h7"/></svg>
+      </button>
+      <button class="brand" type="button" data-action="home" aria-label="На главный экран">
+        <img src="assets/brand/sheikh-lockup.png" alt="" aria-hidden="true">
+      </button>
+      <button class="header-icon bag-button" type="button" data-action="cart" aria-label="Открыть корзину">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8h10l1 11H6L7 8Z"/><path d="M9 9V7a3 3 0 0 1 6 0v2"/></svg>
+        <span id="cartCount" hidden>0</span>
+      </button>
+    </header>
+
+    <nav class="mode-tabs" aria-label="Режим просмотра">
+      <button type="button" class="active" data-mode-target="home">Меню</button>
+      <button type="button" data-mode-target="customize">Состав</button>
+    </nav>
+
+    <section class="dish-scene" id="dishScene" aria-live="polite">
+      <div class="dish-orbit" id="dishOrbit">
+        <button class="side-dish side-left" type="button" data-action="previous-dish" aria-label="Предыдущее блюдо">
+          <img id="previousDishImage" src="assets/salad.webp" alt="">
+        </button>
+
+        <button class="main-dish" id="mainDish" type="button" data-action="open-detail" aria-label="Открыть блюдо">
+          <span class="plate-halo" aria-hidden="true"></span>
+          <span class="plate-mask"><img id="mainDishImage" src="assets/shashlik.webp" width="560" height="560" alt="Шашлык из баранины"></span>
+        </button>
+
+        <button class="side-dish side-right" type="button" data-action="next-dish" aria-label="Следующее блюдо">
+          <img id="nextDishImage" src="assets/lagman.webp" alt="">
+        </button>
+      </div>
+
+      <div class="home-copy" id="homeCopy">
+        <p class="eyebrow" id="dishTag">от шефа</p>
+        <h1 id="dishName">Шашлык из баранины</h1>
+        <p class="dish-meta" id="dishMeta">320 г · приготовлено на углях</p>
+      </div>
+
+      <div class="detail-copy" id="detailCopy" aria-hidden="true">
+        <p class="detail-label">Состав блюда</p>
+        <ul class="detail-facts" id="detailFacts"></ul>
+        <h2 id="detailName">Шашлык из баранины</h2>
+        <p class="detail-description" id="detailDescription"></p>
+        <div class="detail-price-row">
+          <strong id="detailPrice">790 ₽</strong>
+          <span><b>★★★★★</b><small>демо-рейтинг</small></span>
+        </div>
+      </div>
+
+      <article class="place-card" id="placeCard">
+        <img src="assets/plov.webp" width="88" height="88" alt="Интерьер Sheikh Lounge — демо">
+        <div><strong>Sheikh Lounge</strong><small>Взлётная, 2к</small><span>★★★★★ <i>кафе</i></span></div>
+        <b>9,2</b>
+      </article>
+
+      <section class="ingredients" id="ingredients" aria-label="Состав блюда" aria-hidden="true">
+        <div class="ingredient-track" id="ingredientTrack"></div>
+        <button class="ingredient-confirm" type="button" data-action="confirm-customize" aria-label="Подтвердить состав">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 12 4 4 8-8"/></svg>
+        </button>
+      </section>
+    </section>
+
+    <section class="list-view" id="listView" aria-label="Список блюд" aria-hidden="true">
+      <div class="list-items" id="listItems"></div>
+    </section>
+
+    <nav class="bottom-nav" aria-label="Навигация по меню">
+      <button type="button" data-action="home" aria-label="Назад">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"/></svg>
+      </button>
+      <button class="primary-action" type="button" data-action="add-current" aria-label="Добавить текущее блюдо">
+        <svg class="plus-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6v12M6 12h12"/></svg>
+        <svg class="check-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 12 4 4 8-8"/></svg>
+      </button>
+      <button type="button" data-action="toggle-list" aria-label="Показать блюда списком">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2"/><path d="M8 9h8M8 12h8M8 15h5"/></svg>
+      </button>
+    </nav>
+
+    <div class="tap-toast" id="toast" role="status" aria-live="polite"></div>
+  </main>
+
+  <aside class="drawer" id="cartDrawer" aria-hidden="true" aria-label="Корзина">
+    <button class="drawer-backdrop" type="button" data-action="close-drawer" aria-label="Закрыть корзину"></button>
+    <div class="drawer-panel">
+      <div class="drawer-head"><div><small>Ваш заказ</small><h2>Корзина</h2></div><button type="button" data-action="close-drawer">×</button></div>
+      <div id="cartItems"></div>
+      <div class="drawer-total"><span>Итого</span><strong id="cartTotal">0 ₽</strong></div>
+      <button class="order-button" type="button" data-action="demo-order">Оформить демо-заказ</button>
+      <p>Интеграция с iiko будет подключена после утверждения макета.</p>
+    </div>
+  </aside>
+
+  <aside class="drawer" id="infoDrawer" aria-hidden="true" aria-label="Информация о кафе">
+    <button class="drawer-backdrop" type="button" data-action="close-drawer" aria-label="Закрыть информацию"></button>
+    <div class="drawer-panel info-panel">
+      <div class="drawer-head"><div><small>Sheikh Lounge</small><h2>Кафе традиционной кухни</h2></div><button type="button" data-action="close-drawer">×</button></div>
+      <div class="venue-hero">
+        <img src="assets/real/interior-logo.webp" alt="Интерьер Sheikh Lounge">
+        <span>Реальное заведение · Барнаул</span>
+      </div>
+      <p class="venue-lead">Тёплый интерьер и блюда восточной кухни. Этот раздел показывает, как реальные материалы заведения будут работать внутри будущего сайта.</p>
+      <div class="venue-gallery" aria-label="Фотографии заведения и блюд">
+        <figure><img src="assets/real/interior-hall.webp" alt="Интерьер зала"><figcaption>Интерьер</figcaption></figure>
+        <figure><img src="assets/real/lamb-ribs.webp" alt="Бараньи рёбрышки"><figcaption>Мясо на углях</figcaption></figure>
+        <figure><img src="assets/real/meat-platter.webp" alt="Большое мясное блюдо"><figcaption>Мясное ассорти</figcaption></figure>
+        <figure><img src="assets/real/lagman.webp" alt="Лагман"><figcaption>Лагман</figcaption></figure>
+      </div>
+      <div class="venue-address"><small>Адрес</small><strong>Барнаул, Взлётная улица, 2к</strong></div>
+      <a href="https://2gis.ru/barnaul/firm/70000001062281408" target="_blank" rel="noopener">Открыть в 2ГИС ↗</a>
+      <small class="demo-note">Демонстрационный макет. Фотографии из открытых материалов используются только для предварительного согласования; меню, цены и интеграция с iiko уточняются с владельцем.</small>
+    </div>
+  </aside>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
