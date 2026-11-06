@@ -280,21 +280,67 @@ document.addEventListener('click', event => {
 
 let pointerStart = null;
 let suppressClick = false;
-document.querySelector('#dishScene').addEventListener('pointerdown', event => {
-  if (state.mode !== 'home') return;
-  pointerStart = { x: event.clientX, y: event.clientY };
+let suppressClickTimer = null;
+const dishScene = document.querySelector('#dishScene');
+
+function clearPointer() {
+  pointerStart = null;
+}
+
+function suppressSwipeClick() {
+  suppressClick = true;
+  window.clearTimeout(suppressClickTimer);
+  suppressClickTimer = window.setTimeout(() => { suppressClick = false; }, 420);
+}
+
+dishScene.addEventListener('pointerdown', event => {
+  if (state.mode !== 'home' || state.changingDish) return;
+  if (event.pointerType === 'mouse' && event.button !== 0) return;
+
+  pointerStart = {
+    id: event.pointerId,
+    x: event.clientX,
+    y: event.clientY
+  };
+
+  try { dishScene.setPointerCapture(event.pointerId); } catch (_) {}
 });
-document.querySelector('#dishScene').addEventListener('pointerup', event => {
-  if (!pointerStart || state.mode !== 'home') return;
+
+dishScene.addEventListener('pointermove', event => {
+  if (!pointerStart || pointerStart.id !== event.pointerId) return;
+
   const dx = event.clientX - pointerStart.x;
   const dy = event.clientY - pointerStart.y;
-  pointerStart = null;
-  if (Math.abs(dx) > 44 && Math.abs(dx) > Math.abs(dy)) {
-    suppressClick = true;
+
+  if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) {
+    event.preventDefault();
+  }
+}, { passive: false });
+
+dishScene.addEventListener('pointerup', event => {
+  if (!pointerStart || pointerStart.id !== event.pointerId) return;
+
+  const dx = event.clientX - pointerStart.x;
+  const dy = event.clientY - pointerStart.y;
+  const isSwipe = state.mode === 'home'
+    && Math.abs(dx) > 42
+    && Math.abs(dx) > Math.abs(dy) * 1.15;
+
+  try { dishScene.releasePointerCapture(event.pointerId); } catch (_) {}
+  clearPointer();
+
+  if (isSwipe) {
+    suppressSwipeClick();
     switchDish(dx < 0 ? 1 : -1);
-    window.setTimeout(() => { suppressClick = false; }, 80);
   }
 });
+
+dishScene.addEventListener('pointercancel', event => {
+  if (!pointerStart || pointerStart.id !== event.pointerId) return;
+  clearPointer();
+});
+
+dishScene.addEventListener('lostpointercapture', clearPointer);
 
 document.addEventListener('keydown', event => {
   if (event.key === 'Escape') { closeDrawers(); setMode('home'); }
