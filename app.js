@@ -351,17 +351,16 @@ document.addEventListener('keydown', event => {
 
 function initBrandIntro(params) {
   const intro = document.querySelector('#brandIntro');
-  const video = document.querySelector('#brandIntroVideo');
-  if (!intro || !video) return;
+  const logo = document.querySelector('#brandIntroLogo');
+  if (!intro || !logo) return;
 
   const forced = params.get('intro') === '1';
   const disabled = params.get('intro') === '0';
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const saveData = Boolean(navigator.connection && navigator.connection.saveData);
   let seen = false;
-  try { seen = sessionStorage.getItem('sheikh-intro-v1') === 'seen'; } catch (_) {}
+  try { seen = sessionStorage.getItem('sheikh-intro-v2') === 'seen'; } catch (_) {}
 
-  if (disabled || (!forced && (seen || reducedMotion || saveData))) {
+  if (disabled || (!forced && seen)) {
     intro.remove();
     return;
   }
@@ -372,10 +371,9 @@ function initBrandIntro(params) {
     if (closed) return;
     closed = true;
     window.clearTimeout(fallbackTimer);
-    try { sessionStorage.setItem('sheikh-intro-v1', 'seen'); } catch (_) {}
+    try { sessionStorage.setItem('sheikh-intro-v2', 'seen'); } catch (_) {}
     intro.classList.remove('is-visible');
     intro.classList.add('is-leaving');
-    video.pause();
     window.setTimeout(() => intro.remove(), 460);
   };
 
@@ -383,12 +381,8 @@ function initBrandIntro(params) {
   intro.setAttribute('aria-hidden', 'false');
   window.requestAnimationFrame(() => intro.classList.add('is-visible'));
   intro.querySelector('[data-intro-skip]').addEventListener('click', closeIntro);
-  video.addEventListener('ended', closeIntro, { once: true });
-  fallbackTimer = window.setTimeout(closeIntro, 3200);
-  const playback = video.play();
-  if (playback && typeof playback.catch === 'function') {
-    playback.catch(() => { fallbackTimer = window.setTimeout(closeIntro, 900); });
-  }
+  logo.addEventListener('error', closeIntro, { once: true });
+  fallbackTimer = window.setTimeout(closeIntro, reducedMotion ? 720 : 1380);
 }
 
 const previewParams = new URLSearchParams(window.location.search);
