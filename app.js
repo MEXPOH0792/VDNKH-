@@ -354,13 +354,8 @@ function initBrandIntro(params) {
   const logo = document.querySelector('#brandIntroLogo');
   if (!intro || !logo) return;
 
-  const forced = params.get('intro') === '1';
-  const disabled = params.get('intro') === '0';
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let seen = false;
-  try { seen = sessionStorage.getItem('sheikh-intro-v2') === 'seen'; } catch (_) {}
-
-  if (disabled || (!forced && seen)) {
+  if (!document.documentElement.classList.contains('intro-pending')) {
     intro.remove();
     return;
   }
@@ -372,12 +367,12 @@ function initBrandIntro(params) {
     closed = true;
     window.clearTimeout(fallbackTimer);
     try { sessionStorage.setItem('sheikh-intro-v2', 'seen'); } catch (_) {}
+    document.documentElement.classList.remove('intro-pending');
     intro.classList.remove('is-visible');
     intro.classList.add('is-leaving');
     window.setTimeout(() => intro.remove(), 460);
   };
 
-  intro.hidden = false;
   intro.setAttribute('aria-hidden', 'false');
   window.requestAnimationFrame(() => intro.classList.add('is-visible'));
   intro.querySelector('[data-intro-skip]').addEventListener('click', closeIntro);

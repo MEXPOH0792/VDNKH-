@@ -6,12 +6,22 @@
   <meta name="theme-color" content="#020704">
   <meta name="description" content="Интерактивный мобильный прототип меню Sheikh Lounge">
   <title>Sheikh Lounge — меню</title>
+  <script>
+    (() => {
+      const params = new URLSearchParams(location.search);
+      const forced = params.get('intro') === '1';
+      const disabled = params.get('intro') === '0';
+      let seen = false;
+      try { seen = sessionStorage.getItem('sheikh-intro-v2') === 'seen'; } catch (_) {}
+      if (!disabled && (forced || !seen)) document.documentElement.classList.add('intro-pending');
+    })();
+  </script>
   <link rel="preload" href="assets/brand/sheikh-logo-animated.svg" as="image" type="image/svg+xml" fetchpriority="high">
   <link rel="preload" href="assets/plov-full.webp" as="image">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="brand-intro" id="brandIntro" hidden aria-hidden="true" aria-label="Фирменная заставка Sheikh Lounge">
+  <div class="brand-intro" id="brandIntro" aria-hidden="true" aria-label="Фирменная заставка Sheikh Lounge">
     <img class="brand-intro-logo" id="brandIntroLogo" src="assets/brand/sheikh-logo-animated.svg" alt="" aria-hidden="true">
     <button class="intro-skip" type="button" data-intro-skip>Пропустить</button>
   </div>

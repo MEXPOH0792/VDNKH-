@@ -31,14 +31,15 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
   position: fixed;
   z-index: 140;
   inset: 0;
-  display: grid;
+  display: none;
   place-items: center;
   overflow: hidden;
   background: #050403;
   opacity: 0;
   transition: opacity 420ms var(--ease-out);
 }
-.brand-intro[hidden] { display: none; }
+.intro-pending .brand-intro { display: grid; opacity: 1; }
+.intro-pending .app { visibility: hidden; }
 .brand-intro.is-visible { opacity: 1; }
 .brand-intro.is-leaving { opacity: 0; pointer-events: none; }
 .brand-intro::after {
